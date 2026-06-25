@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Repository of Tamil Nadu Legislative Assembly</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 13px; color: #333; background: #fff; }
+
+  /* Top accessibility bar */
+  .top-bar {
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    padding: 4px 20px;
+    text-align: right;
+    font-size: 12px;
+    color: #555;
+  }
+  .top-bar span { margin: 0 4px; cursor: pointer; }
+  .top-bar .how-to { color: #d9534f; font-weight: bold; }
+
+  /* Header */
+  .header {
+    background: #fff;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid #003580;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-title img { height: 60px; }
+  .header-title h1 {
+    font-size: 22px;
+    color: #003580;
+    font-weight: bold;
+  }
+  .header-controls {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .header-controls label { display: flex; align-items: center; gap: 4px; }
+  .header-controls select {
+    border: 1px solid #ccc;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+  }
+  .btn-login {
+    background: none;
+    border: 1px solid #003580;
+    color: #003580;
+    padding: 3px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  /* Navigation */
+  .navbar {
+    background: #003580;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+  }
+  .navbar .home-icon {
+    background: #f5a623;
+    padding: 10px 14px;
+    color: #fff;
+    font-size: 18px;
+  }
+  .navbar a {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 14px;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .navbar a:hover { background: #00276b; }
+  .navbar a .arrow { font-size: 10px; }
+
+  /* Main layout */
+  .main {
+    display: flex;
+    gap: 0;
+    padding: 16px;
+    align-items: flex-start;
+  }
+
+  /* Filter sidebar */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    border: 1px solid #ccc;
+    padding: 12px;
+    margin-right: 16px;
+  }
+  .sidebar h3 {
+    font-size: 14px;
+    color: #003580;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  .filter-group { margin-bottom: 12px; }
+  .filter-group-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 6px;
+    color: #222;
+  }
+  .filter-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 5px;
+    font-size: 12px;
+  }
+  .filter-item input[type="checkbox"] { cursor: pointer; }
+
+  /* Search area */
+  .content { flex: 1; }
+
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .result-header span { font-size: 13px; color: #333; }
+  .btn-start-over {
+    background: #d9534f;
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 2px;
+  }
+
+  /* Search box */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    margin-bottom: 12px;
+    gap: 8px;
+  }
+  .search-bar .keyboard-icon { font-size: 18px; color: #555; cursor: pointer; }
+  .search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 13px;
+    padding: 4px;
+  }
+
+  /* Advanced search */
+  .advanced-search {
+    border: 1px solid #ccc;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .advanced-search h4 {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #222;
+  }
+  .adv-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 8px 12px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .adv-grid label { font-size: 12px; font-weight: bold; color: #333; }
+  .adv-grid input {
+    border: 1px solid #ccc;
+    padding: 5px 8px;
+    font-size: 12px;
+    width: 100%;
+    color: #aaa;
+  }
+  .adv-grid input::placeholder { color: #aaa; }
+  .adv-buttons { display: flex; gap: 8px; }
+  .btn-reset {
+    background: #d9534f;
+    color: #fff;
+    border: none;
+    padding: 6px 18px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 2px;
+  }
+  .btn-search {
+    background: #2e7d32;
+    color: #fff;
+    border: none;
+    padding: 6px 18px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 2px;
+  }
+
+  /* Breadcrumb & controls */
+  .breadcrumb-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .breadcrumb .crumb {
+    padding: 7px 16px;
+    font-size: 13px;
+    background: #003580;
+    color: #fff;
+    text-decoration: none;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%);
+    margin-right: 2px;
+  }
+  .breadcrumb .crumb.active {
+    background: #5b8def;
+    clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%);
+  }
+  .breadcrumb .crumb-last {
+    padding: 7px 16px;
+    font-size: 13px;
+    color: #333;
+    background: none;
+  }
+  .sort-controls { display: flex; gap: 8px; }
+  .sort-controls select {
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 2px;
+  }
+
+  /* Results table */
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+  }
+  .results-table th {
+    background: #e8e8e8;
+    border: 1px solid #ccc;
+    padding: 7px 6px;
+    text-align: center;
+    font-weight: bold;
+    color: #222;
+    vertical-align: middle;
+  }
+  .results-table td {
+    border: 1px solid #ccc;
+    padding: 6px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .results-table tr:nth-child(even) td { background: #f9f9f9; }
+
+  /* Action buttons */
+  .btn-view { background: #003580; color: #fff; border: none; padding: 5px 12px; border-radius: 3px; cursor: pointer; font-size: 12px; font-weight: bold; }
+  .icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: #555; }
+
+  /* Footer */
+  footer {
+    background: #f5f5f5;
+    border-top: 1px solid #ddd;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 11px;
+    color: #555;
+  }
+  footer a { color: #003580; text-decoration: none; margin: 0 6px; }
+  footer .tnla-credit { color: #d9534f; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<!-- Top accessibility bar -->
+<div class="top-bar">
+  <span>-A</span> |
+  <span>A</span> |
+  <span>+A</span> |
+  <span>&#9680;</span> |
+  <span class="how-to">&#10067; How to Optimize Search</span>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-title">
+    
+     <h1><img src="img\logo_eng.png"></h1>
+  </div>
+  <div class="header-controls">
+    <label><input type="checkbox"> Synonym</label>
+    <select><option>ENGLISH</option><option>தமிழ்</option></select>
+    <button class="btn-login">LOGIN / REGISTER</button>
+  </div>
+</div>
+
+<!-- Navigation -->
+<nav class="navbar">
+ <a href="tnla_bills_act.html"> <span class="home-icon">&#8962;</span></a>
+  <a href="#">Debate Books &#9662;</a>
+  <a href="#">Bills &amp;Act</a>
+  <a href="#">Committee Reports &#9662;</a>
+  <a href="#">Papers laid on the table &#9662;</a>
+  <a href="#">Publications</a>
+  <a href="#">Photos</a>
+  <a href="#">News Clippings</a>
+</nav>
+
+<!-- Main content -->
+<div class="main">
+
+  <!-- Sidebar filters -->
+  <div class="sidebar">
+    <h3>FILTER BY</h3>
+
+    <div class="filter-group">
+      <div class="filter-group-header">
+        <span>Assembly Number</span>
+        <span>&#8722;</span>
+      </div>
+      <div class="filter-item"><input type="checkbox"> TNLA-15-(2016-2021)</div>
+      <div class="filter-item"><input type="checkbox"> TNLA-16-(2021-2026)</div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-group-header">
+        <span>Class of the Bill</span>
+        <span>&#8722;</span>
+      </div>
+      <div class="filter-item"><input type="checkbox"> Money Bill</div>
+      <div class="filter-item"><input type="checkbox"> Non-Money Bill</div>
+      <div class="filter-item"><input type="checkbox"> Financial Bill</div>
+    </div>
+  </div>
+
+  <!-- Content area -->
+  <div class="content">
+
+    <!-- Result count + start over -->
+    <div class="result-header">
+      <span>1 Items found 0.001 seconds</span>
+      <button class="btn-start-over">Start Over</button>
+    </div>
+
+    <!-- Keyword search bar -->
+    <div class="search-bar">
+      <span class="keyboard-icon">&#9000;</span>
+      <input type="text" placeholder="Enter your keyword">
+    </div>
+
+    <!-- Advanced search -->
+    <div class="advanced-search">
+      <h4>Advanced Search</h4>
+      <div class="adv-grid">
+        <label>Term of the Assembly</label>
+        <input type="text" placeholder="TNLA-##-(yyyy-yyyy)">
+
+        <label>Title of the Bill</label>
+        <input type="text" placeholder="Enter Title of the Bill">
+
+        <label>L.A.Bill No</label>
+        <input type="text" placeholder="Enter L.A.Bill No">
+
+        <label>Official/Non-Official</label>
+        <input type="text" placeholder="Enter Official/Non-Official">
+
+        <label>Name of Member in charge</label>
+        <input type="text" placeholder="Enter Name of Member in charge">
+
+        <label>Department to which it Pertains</label>
+        <input type="text" placeholder="Enter Department to which it Pertains">
+
+        <label>Class of the Bill</label>
+        <input type="text" placeholder="Enter Class of the Bill">
+
+        <label>Bill Assented By</label>
+        <input type="text" placeholder="Enter Bill Assented By">
+
+        <label>Act No</label>
+        <input type="text" placeholder="Enter Act No">
+      </div>
+      <div class="adv-buttons">
+        <button class="btn-reset">Reset</button>
+        <button class="btn-search">Search</button>
+      </div>
+    </div>
+
+    <!-- Breadcrumb & sort controls -->
+    <div class="breadcrumb-bar">
+      <div class="breadcrumb">
+        <a href="#" class="crumb">Home Page</a>
+        <a href="#" class="crumb active">Records</a>
+        <span class="crumb-last">&#187; Bills &amp; Act [1 items]</span>
+      </div>
+      <div class="sort-controls">
+        <select><option>Relevance</option><option>Date</option><option>Title</option></select>
+        <select><option>20 per page</option><option>50 per page</option><option>100 per page</option></select>
+      </div>
+    </div>
+
+    <!-- Results table -->
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>Term of the Assembly</th>
+          <th>Title of the Bill</th>
+          <th>L.A.Bill No</th>
+          <th>Official/Non-Official</th>
+          <th>Name of Member in charge</th>
+          <th>Department to which it Pertains</th>
+          <th>Class of the Bill (Money Bill/Non Bill/Financial Bill)</th>
+          <th>Date of Introduction</th>
+          <th>Date of Passing</th>
+          <th>Bill assented by (Governor/President)</th>
+          <th>Bill assented on</th>
+          <th>Title of the Act</th>
+          <th>Act No</th>
+          <th>Gazette extra-ordinary Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TNLA-16-<br>(2021-2026)</td>
+          <td>The Tamilnadu Fiscal Responsibility (Amendment) Bill 2021</td>
+          <td>17 of 2021</td>
+          <td>Official</td>
+          <td>Hon. Dr.Palanivel Thiaga Rajan, Minister for Finance and Human Resources Management</td>
+          <td>Finance Department</td>
+          <td>Non Money Bill</td>
+          <td>22-06-2021</td>
+          <td>24-06-2021</td>
+          <td>Governor</td>
+          <td>24-07-2021</td>
+          <td>The TamilNadu Fiscal Reponsibity(Amendment)Act,2021</td>
+          <td>13 of 2021</td>
+          <td>26-7-2021</td>
+          <td>
+            <button class="icon-btn" title="Preview">&#128065;</button>
+            <button class="icon-btn" title="Download" style="color:#003580;">&#11015;</button>
+            <a href="tnla_bills_act_detail.html" target="_blank"><button class="btn-view">View<br>Details</button></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div>
+    <a href="#">Terms Of Service &amp; Disclaimer</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Copyright &amp; Take Down Policy</a>
+    <a href="#">Supported Browsers</a>
+    <a href="#">FAQ</a>
+    <a href="#">Sitemap</a>
+  </div>
+  <div style="margin-top:4px;">
+    Copyright &copy; 2024 <span class="tnla-credit">Contents owned and updated by Tamil Nadu Legislative Assembly</span> Visitors Count
+  </div>
+</footer>
+
+</body>
+</html>
